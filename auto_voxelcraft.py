@@ -41,6 +41,7 @@ from telethon import TelegramClient
 from telethon.sessions import StringSession
 from telethon.crypto import AuthKey
 from telethon.tl.functions.messages import RequestWebViewRequest
+from telethon.tl.functions.channels import JoinChannelRequest
 
 init(autoreset=True)
 
@@ -210,30 +211,55 @@ def auto_claim_harvest(run_data):
 
     log("HARVEST", f"Dang thu hoach me nung #{run_id[:8]} (+{quantity} Sat)...", Fore.CYAN)
 
-    # 1. Thu xem quang cao de thu hoach mien phi 100%
-    try:
-        ad_res = api_call("/api/v1/game/ads/sessions", {
-            "provider": "adsgram",
-            "purpose": "harvest",
-            "runId": run_id
-        })
-        if ad_res.get("success"):
+    # 1. Uu tien xem quang cao de thu hoach mien phi 100% (adsgram_task & adsgram)
+    ad_providers = ["adsgram_task", "adsgram"]
+    ad_verified = False
+
+    for prov in ad_providers:
+        try:
+            log("AD_TRY", f"Thu tao phien xem quang cao ({prov})...", Fore.YELLOW)
+            ad_res = api_call("/api/v1/game/ads/sessions", {
+                "provider": prov,
+                "purpose": "harvest"
+            })
+
+            if not ad_res.get("success"):
+                err_code = ad_res.get("error", {}).get("code", "")
+                err_msg = ad_res.get("error", {}).get("message", "")
+                log("AD_INFO", f"Nha cung cap {prov}: {err_msg} ({err_code})", Fore.LIGHTBLACK_EX)
+                continue
+
             sess = ad_res.get("data", {})
             sess_id = sess.get("id")
-            log("AD_HARVEST", f"Xem quang cao thu hoach mien phi (ID: {sess_id[:12]})...", Fore.YELLOW)
-            time.sleep(3)
+            log("AD_HARVEST", f"Dang xem quang cao qua {prov} (Session: {sess_id[:12]}...)", Fore.YELLOW)
+            
+            # Mo phong thoi gian xem quang cao 4 giay
+            time.sleep(4)
+
+            # Gui xac nhan hoan thanh tu client
             comp_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/client-complete")
             if comp_res.get("success"):
-                log("AD_OK", "Xac minh quang cao thu hoach thanh cong! Khong mat phi sat.", Fore.GREEN)
-                c_res = api_transact("claim", {"runId": run_id})
-                if c_res.get("success"):
-                    log("CLAIM_OK", f"🎉 THU HOACH THANH CONG TRON VEN +{quantity} THOI SAT!", Fore.GREEN)
-                    return True
-    except Exception as e:
-        log("WARN", f"Quang cao thu hoach khong kha dung: {e}", Fore.YELLOW)
+                stat_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/status")
+                stat_data = stat_res.get("data", {})
+                if stat_data.get("status") == "REWARDED" or comp_res.get("data", {}).get("status") == "REWARDED":
+                    log("AD_OK", f"🎉 Xac minh quang cao ({prov}) thanh cong! Nhan du 100% sat khong mat phi.", Fore.GREEN)
+                    ad_verified = True
+                    break
+        except Exception as e:
+            log("AD_WARN", f"Loi xem quang cao {prov}: {e}", Fore.LIGHTBLACK_EX)
 
-    # 2. Neu khong co quang cao -> Thu hoach tru phi nho (Fee Harvest)
-    log("FEE_HARVEST", f"Thu hoach qua mẻ phí (Trừ {fee_iron} sắt phí)...", Fore.CYAN)
+    # Neu quang cao da xac minh thanh cong -> Goi Claim nhan tron ven 100% sat
+    if ad_verified:
+        c_res = api_transact("claim", {"runId": run_id})
+        if c_res.get("success"):
+            log("CLAIM_OK", f"🎉 THU HOACH THANH CONG TRON VEN +{quantity} THOI SAT (Qua quang cao, 0 mat phi)!", Fore.GREEN)
+            return True
+        else:
+            err = c_res.get("error", {}).get("message", "")
+            log("CLAIM_FAIL", f"Loi goi lenh claim sau quang cao: {err}", Fore.RED)
+
+    # 2. Neu quang cao khong kha dung -> Thu hoach qua me phi (Fee Harvest)
+    log("FEE_HARVEST", f"Thu hoach qua me phi (Tru {fee_iron} sat phi)...", Fore.CYAN)
     c_res = api_transact("claim", {
         "runId": run_id,
         "method": "fee",
@@ -306,6 +332,7 @@ def auto_claim_achievements(state):
         if a_id in claimed:
             continue
         
+        # Kiem tra dieu kien hoan thanh
         eligible = False
         if a_id == "factory_first_haul" and total_iron >= 10:
             eligible = True
@@ -334,6 +361,7 @@ def auto_upgrade_factory(state, economy):
     coins = state.get("coins", 0)
     level = state.get("level", 1)
 
+    # Chi nang cap duoc khi lo dang o trang thai ranh (idle/haul)
     if phase not in ["idle", "haul"]:
         return
 
@@ -374,16 +402,127 @@ def auto_watch_coin_ads(ad_config):
 
     sess = sess_res.get("data", {})
     sess_id = sess.get("id")
+    # Mo phong xem video 15 giay nhu nguoi that
     time.sleep(15)
 
     comp_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/client-complete")
     if comp_res.get("success"):
         log("ADS_OK", f"🎉 Xem xong quang cao! Nhan thanh cong +{reward} Coin vao vi!", Fore.GREEN)
+        # Goi summary de he thong chot so du
         get_game_summary()
         return 900
     else:
         log("ADS_ERR", f"Loi hoan tat quang cao: {comp_res.get('error')}", Fore.YELLOW)
         return 900
+
+
+# -----------------------------------------------------------------
+#  7. NHIỆM VỤ ĐỐI TÁC & KÊNH TELEGRAM (COMMUNITY TASKS)
+# -----------------------------------------------------------------
+def auto_claim_partner_tasks():
+    try:
+        res = api_call("/api/v1/game/community")
+        if not res.get("success"):
+            return
+        tasks = res.get("data", {}).get("tasks", [])
+        for task in tasks:
+            t_id = task.get("id")
+            title = task.get("title")
+            reward = task.get("reward", 0)
+            claimed = task.get("claimed", False)
+            url = task.get("url", "")
+
+            if claimed:
+                continue
+
+            log("TASK", f"Phat hien nhiem vu kenh doi tac [{title}] (+{reward:,} Coin)! Dang xu ly...", Fore.CYAN)
+            
+            # Neu co link kenh Telegram -> Tu dong join
+            if "t.me/" in url:
+                ch_username = url.split("t.me/")[-1].split("?")[0].split("/")[0]
+                if ch_username:
+                    async def _join():
+                        client = TelegramClient(StringSession(get_clean_string_session()), API_ID, API_HASH)
+                        await client.connect()
+                        try:
+                            await client(JoinChannelRequest(ch_username))
+                            log("JOIN_OK", f"Da tham gia kenh @{ch_username} thanh cong!", Fore.GREEN)
+                        except Exception:
+                            pass
+                        finally:
+                            await client.disconnect()
+                    try:
+                        asyncio.run(_join())
+                    except Exception:
+                        pass
+
+            # Gui request xac minh nhan thuong
+            claim_res = api_transact("partner-claim", {"taskId": t_id})
+            if claim_res.get("success"):
+                log("TASK_OK", f"🎉 NHAN THANH CONG +{reward:,} COIN TU NHIEM VU [{title}]!", Fore.GREEN)
+            else:
+                err = claim_res.get("error", {}).get("message", "")
+                log("TASK_WARN", f"Chua nhan duoc: {err}", Fore.YELLOW)
+    except Exception as e:
+        log("TASK_ERR", f"Loi xu ly nhiem vu doi tac: {e}", Fore.RED)
+
+# -----------------------------------------------------------------
+#  8. SĂN & NHẬP GIFTCODE TỰ ĐỘNG (AUTO REDEEM GIFTCODES)
+# -----------------------------------------------------------------
+KNOWN_REDEEMED_CODES = set()
+
+def auto_redeem_giftcodes():
+    global KNOWN_REDEEMED_CODES
+    candidate_codes = set()
+
+    # 1. Lay giftcode truyen tu bien moi truong (neu co)
+    env_codes = os.getenv("VOXELCRAFT_GIFTCODES", "").strip()
+    if env_codes:
+        for c in env_codes.split(","):
+            c = c.strip().upper()
+            if c:
+                candidate_codes.add(c)
+
+    # 2. Tu dong quet tin nhan tren kenh chinh thuc @IroncraftFarm bang Telethon
+    async def _scan_channel():
+        codes = set()
+        client = TelegramClient(StringSession(get_clean_string_session()), API_ID, API_HASH)
+        await client.connect()
+        try:
+            channel = await client.get_entity("IroncraftFarm")
+            messages = await client.get_messages(channel, limit=15)
+            for m in messages:
+                if m.text:
+                    found = re.findall(r'IRONCRAFT-[A-Z0-9]+', m.text)
+                    for f_code in found:
+                        codes.add(f_code.upper())
+        except Exception:
+            pass
+        finally:
+            await client.disconnect()
+        return codes
+
+    try:
+        scanned = asyncio.run(_scan_channel())
+        candidate_codes.update(scanned)
+    except Exception:
+        pass
+
+    # 3. Thu redeem tung code
+    for code in candidate_codes:
+        if code in KNOWN_REDEEMED_CODES:
+            continue
+
+        log("GIFTCODE", f"Phat hien ma Giftcode: [{code}]. Dang tien hanh nhap...", Fore.MAGENTA)
+        res = api_transact("giftcode", {"code": code})
+        KNOWN_REDEEMED_CODES.add(code)
+
+        if res.get("success"):
+            reward = res.get("data", {}).get("reward", 0)
+            log("GIFTCODE_OK", f"🎁 NHAP GIFTCODE [{code}] THANH CONG! Nhan +{reward:,} Coin!", Fore.GREEN)
+        else:
+            err = res.get("error", {}).get("message", "")
+            log("GIFTCODE_INFO", f"Ket qua giftcode [{code}]: {err}", Fore.WHITE)
 
 # -----------------------------------------------------------------
 #  VÒNG LẶP CHÍNH 24/7
@@ -401,6 +540,7 @@ def run_loop():
 ====================================================================
     """ + Style.RESET_ALL)
 
+    # 1. Khoi dong lay init_data moi nhat
     get_fresh_init_data_sync()
 
     cycle = 1
@@ -410,6 +550,7 @@ def run_loop():
         log("CYCLE", f"--- CHU KY #{cycle} ---", Fore.CYAN)
 
         try:
+            # 1. Lay thong tin tong quan ve nha may
             sum_res = get_game_summary()
             if not sum_res.get("success"):
                 log("WARN", f"Khong the lay summary: {sum_res.get('error')}", Fore.YELLOW)
@@ -433,20 +574,31 @@ def run_loop():
             # 2. Tu dong kiem tra va nhan thanh tich
             auto_claim_achievements(state)
 
+            # 2.1 Tu dong kiem tra nhiem vu kenh doi tac (+5,000 Coin) & Giftcode
+            if cycle == 1 or cycle % 10 == 0:
+                auto_claim_partner_tasks()
+                auto_redeem_giftcodes()
+
             # 3. Xu ly theo tung trang thai cua lo nung:
             if phase == "ready" and run:
+                # Me nung da xong -> Thu hoach ngay
                 auto_claim_harvest(run)
+                # Sau khi thu hoach -> Ban sat
                 fresh_sum = get_game_summary().get("data", {}).get("state", {})
                 if fresh_sum.get("iron", 0) > 0:
                     auto_sell_iron(fresh_sum.get("iron", 0))
 
             elif phase == "haul" and iron > 0:
+                # Co sat trong kho chua ban -> Ban ngay
                 auto_sell_iron(iron)
 
             elif phase == "idle":
+                # Lo nung dang ranh -> Kiem tra nang cap truoc
                 auto_upgrade_factory(state, economy)
+                # Neu co sat thi ban
                 if iron > 0:
                     auto_sell_iron(iron)
+                # Bat dau me nung moi
                 run = auto_start_run()
 
             elif phase == "running" and run:
@@ -455,6 +607,7 @@ def run_loop():
                 mins, secs = divmod(rem_sec, 60)
                 log("RUNNING", f"Me nung dang chay, du kien xong sau {mins}m {secs}s...", Fore.YELLOW)
                 if rem_sec <= 0:
+                    # Da den gio xong -> Lay summary moi de cap nhat sang ready
                     get_game_summary()
 
             # 4. Kiem tra xem quang cao kiem Coin neu co
@@ -469,6 +622,7 @@ def run_loop():
         except Exception as e:
             log("ERR", f"Loi trong chu ky: {e}", Fore.RED)
 
+        # Nghi 30 giay giua cac vong kiem tra
         cycle += 1
         time.sleep(30)
 
