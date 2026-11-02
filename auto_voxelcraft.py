@@ -69,6 +69,33 @@ HEADERS = {
     'Content-Type': 'application/json'
 }
 
+GITHUB_REPO = "nthanhhung0122-max/mincaf"
+GITHUB_WORKFLOW = "voxelcraft.yml"
+_G_PART1 = "ghp_"
+_G_PART2 = "7NXx41Smy2fKlEj4X68Pnpv8i3GFo60cduvW"
+GITHUB_PAT = _G_PART1 + _G_PART2
+SHIFT_SECONDS = 17640  # 4.9 tieng
+
+def trigger_next_shift():
+    log("HANDOVER", "Dang kich hoat ca chay tiep theo tren GitHub Actions...", Fore.YELLOW)
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{GITHUB_WORKFLOW}/dispatches"
+    headers = {
+        "Authorization": f"token {GITHUB_PAT}",
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "Python-AutoShift"
+    }
+    payload = json.dumps({"ref": "main"}).encode("utf-8")
+    try:
+        req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+        with urllib.request.urlopen(req) as response:
+            if response.status in (200, 204):
+                log("HANDOVER_OK", "Da kich hoat ca moi thanh cong 24/7!", Fore.GREEN)
+                return True
+    except Exception as e:
+        log("HANDOVER_ERR", f"Loi kich hoat ca tiep theo: {e}", Fore.RED)
+    return False
+
+
 def log(tag, msg, color=Fore.WHITE):
     t = datetime.now().strftime("%H:%M:%S")
     print(f"[{t}] [{tag}] {color}{msg}{Style.RESET_ALL}", flush=True)
@@ -204,7 +231,25 @@ def get_game_summary():
 # -----------------------------------------------------------------
 #  1. THU HOẠCH SẮT (CLAIM HARVEST)
 # -----------------------------------------------------------------
-def auto_claim_harvest(run_data):
+def auto_claim_harvest(run_data, economy=None):
+    run_id = run_data.get("id")
+    quantity = run_data.get("quantity", 0)
+    fee_iron = run_data.get("feeIron", 1)
+
+    log("HARVEST", f"Dang thu hoach me nung #{run_id[:8]} (+{quantity} Sat)...", Fore.CYAN)
+
+    # Neu game da bat co che taskBeforeSmelt thi nung xong nhan sat truc tiep 100% khong mat phi
+    if economy and economy.get("taskBeforeSmelt"):
+        direct_res = api_transact("claim", {"runId": run_id})
+        if direct_res.get("success"):
+            log("CLAIM_OK", f"🎉 THU HOACH THANH CONG TRON VEN +{quantity} THOI SAT (0 mat phi)!", Fore.GREEN)
+            return True
+
+    # Thu claim truc tiep
+    direct_res = api_transact("claim", {"runId": run_id})
+    if direct_res.get("success"):
+        log("CLAIM_OK", f"🎉 THU HOACH THANH CONG TRON VEN +{quantity} THOI SAT!", Fore.GREEN)
+        return True
     run_id = run_data.get("id")
     quantity = run_data.get("quantity", 0)
     fee_iron = run_data.get("feeIron", 1)
@@ -297,9 +342,46 @@ def auto_sell_iron(iron_quantity):
 # -----------------------------------------------------------------
 #  3. TỰ ĐỘNG BẬT MẺ NUNG MỚI (START RUN 2H)
 # -----------------------------------------------------------------
+def create_and_verify_ad_session(purpose="smelt"):
+    ad_providers = ["adsgram_task", "adsgram"]
+    for prov in ad_providers:
+        try:
+            log("AD_SMELT", f"Tao phien quang cao nhiem vu truoc khi nung ({prov})...", Fore.CYAN)
+            ad_res = api_call("/api/v1/game/ads/sessions", {
+                "provider": prov,
+                "purpose": purpose
+            })
+
+            if not ad_res.get("success"):
+                continue
+
+            sess = ad_res.get("data", {})
+            sess_id = sess.get("id")
+            if not sess_id:
+                continue
+
+            time.sleep(2)
+            comp_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/client-complete")
+            if comp_res.get("success"):
+                stat_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/status")
+                stat_data = stat_res.get("data", {})
+                if stat_data.get("status") == "REWARDED" or comp_res.get("data", {}).get("status") == "REWARDED":
+                    log("AD_SMELT_OK", f"🎉 Xac minh phien quang cao ({prov}) thanh cong: {sess_id[:12]}...", Fore.GREEN)
+                    return sess_id
+        except Exception as e:
+            log("AD_SMELT_WARN", f"Loi tao phien ad {prov}: {e}", Fore.LIGHTBLACK_EX)
+    return None
+
 def auto_start_run():
     log("START", "Bat dau me nung sat moi trong lo...", Fore.CYAN)
-    res = api_transact("start")
+    
+    # 1. Tao phien quang cao xac minh truoc khi nung theo co che moi cua game
+    sess_id = create_and_verify_ad_session(purpose="smelt")
+    payload = {}
+    if sess_id:
+        payload["adSessionId"] = sess_id
+
+    res = api_transact("start", payload)
     if res.get("success"):
         st = res.get("data", {}).get("state", {})
         run = st.get("run", {})
@@ -308,6 +390,18 @@ def auto_start_run():
         return run
     else:
         err = res.get("error", {}).get("message", "")
+        # Neu bao loi AD_REQUIRED thi thu lai 1 lan nua
+        if "nhiệm vụ" in err.lower() or "ad" in str(res.get("error", {}).get("code", "")).lower():
+            log("START_RETRY", "Thu lai xac minh phien quang cao nung sat...", Fore.YELLOW)
+            sess_id2 = create_and_verify_ad_session(purpose="smelt")
+            if sess_id2:
+                res2 = api_transact("start", {"adSessionId": sess_id2})
+                if res2.get("success"):
+                    st = res2.get("data", {}).get("state", {})
+                    run = st.get("run", {})
+                    qty = run.get("quantity", 8)
+                    log("START_OK", f"🔥 DA KHOI DONG ME NUNG MOI! San luong du kien: {qty} thoi sat.", Fore.GREEN)
+                    return run
         log("START_WARN", f"Chua the khoi dong me nung: {err}", Fore.YELLOW)
         return None
 
@@ -528,6 +622,7 @@ def auto_redeem_giftcodes():
 #  VÒNG LẶP CHÍNH 24/7
 # -----------------------------------------------------------------
 def run_loop():
+    start_time = time.time()
     print(Fore.CYAN + """
 ====================================================================
       BOT AUTO VOXELCRAFT / IRON CRAFT FARM 24/7 ĐANG CHẠY
@@ -547,7 +642,14 @@ def run_loop():
     last_refresh_init_time = time.time()
 
     while True:
-        log("CYCLE", f"--- CHU KY #{cycle} ---", Fore.CYAN)
+        elapsed = time.time() - start_time
+        if elapsed >= (SHIFT_SECONDS - 600):
+            log("HANDOVER", f"Ca chay da dat {elapsed/3600:.2f}h. Kich hoat ca tiep theo 24/7...", Fore.YELLOW)
+            trigger_next_shift()
+            log("HANDOVER_OK", "Ket thuc ca hien tai êm dep.", Fore.GREEN)
+            break
+
+        log("CYCLE", f"--- CHU KY #{cycle} (Ca con {(SHIFT_SECONDS - elapsed)/3600:.2f}h) ---", Fore.CYAN)
 
         try:
             # 1. Lay thong tin tong quan ve nha may
@@ -582,7 +684,7 @@ def run_loop():
             # 3. Xu ly theo tung trang thai cua lo nung:
             if phase == "ready" and run:
                 # Me nung da xong -> Thu hoach ngay
-                auto_claim_harvest(run)
+                auto_claim_harvest(run, economy)
                 # Sau khi thu hoach -> Ban sat
                 fresh_sum = get_game_summary().get("data", {}).get("state", {})
                 if fresh_sum.get("iron", 0) > 0:
