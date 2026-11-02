@@ -3,7 +3,11 @@ name: Auto VoxelCraft Farm 24/7
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 */4 * * *'
+
+concurrency:
+  group: voxelcraft-run
+  cancel-in-progress: true
 
 jobs:
   run-voxelcraft:
@@ -24,7 +28,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests telethon colorama
 
-      - name: Chay Bot VoxelCraft (Tu dong bat lai sau 1 phut neu tat)
+      - name: Chay Bot VoxelCraft 24/7
         env:
           PYTHONUNBUFFERED: "1"
           PYTHONIOENCODING: "utf-8"
@@ -32,10 +36,4 @@ jobs:
           TELEGRAM_SESSION_B64_ACC1: ${{ secrets.TELEGRAM_SESSION_B64_ACC1 }}
           TELEGRAM_SESSION_B64: ${{ secrets.TELEGRAM_SESSION_B64 }}
         run: |
-          while true; do
-            python auto_voxelcraft.py || true
-            echo "--------------------------------------------------------"
-            echo "Bot vua ket thuc, nghi 60 giay roi tu dong khoi dong lai..."
-            echo "--------------------------------------------------------"
-            sleep 60
-          done
+          python auto_voxelcraft.py
