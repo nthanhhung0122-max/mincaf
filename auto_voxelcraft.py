@@ -147,7 +147,7 @@ GITHUB_WORKFLOW = "voxelcraft.yml"
 
 _G_PART1 = "ghp_"
 
-_G_PART2 = "7NXx41Smy2fKlEj4X68Pnpv8i3GFo60cduvW"
+_G_PART2 = "4uoxqr79k4DnDki4jYmjIORTKybfeX1XnPbn"
 
 GITHUB_PAT = _G_PART1 + _G_PART2
 
