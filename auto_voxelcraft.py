@@ -1,10 +1,20 @@
 import math
 
+
+
 """
 
 
 
+
+
+
+
 ====================================================================
+
+
+
+
 
 
 
@@ -12,7 +22,15 @@ import math
 
 
 
+
+
+
+
   Website: https://voxelcraft.online | Bot: @IronCraftFarmBot
+
+
+
+
 
 
 
@@ -20,7 +38,15 @@ import math
 
 
 
+
+
+
+
   TÍNH NĂNG CHÍNH:
+
+
+
+
 
 
 
@@ -28,7 +54,15 @@ import math
 
 
 
+
+
+
+
       (kết nối trực tiếp @IronCraftFarmBot, chống văng token, không bao giờ hết hạn).
+
+
+
+
 
 
 
@@ -36,7 +70,15 @@ import math
 
 
 
+
+
+
+
     - Tự động THU HOẠCH SẮT (Claim Harvest) khi mẻ nung hoàn tất:
+
+
+
+
 
 
 
@@ -44,7 +86,15 @@ import math
 
 
 
+
+
+
+
       + Fallback sang Fee Harvest nếu hết lượt quảng cáo.
+
+
+
+
 
 
 
@@ -52,7 +102,15 @@ import math
 
 
 
+
+
+
+
     - Tự động NHẬN THÀNH TÍCH (Achievements) thưởng Coin khủng:
+
+
+
+
 
 
 
@@ -60,7 +118,15 @@ import math
 
 
 
+
+
+
+
       + Giao dịch đầu tiên (+150 Coin)
+
+
+
+
 
 
 
@@ -68,7 +134,15 @@ import math
 
 
 
+
+
+
+
       + Chủ xưởng Lv.2 (+500 Coin)
+
+
+
+
 
 
 
@@ -76,7 +150,15 @@ import math
 
 
 
+
+
+
+
     - Tự động BẮT ĐẦU MẺ NUNG MỚI (Start Run) liên tục 24/7.
+
+
+
+
 
 
 
@@ -84,7 +166,15 @@ import math
 
 
 
+
+
+
+
     - Hỗ trợ chạy 24/7 trên GitHub Actions hoặc máy tính cá nhân.
+
+
+
+
 
 
 
@@ -92,7 +182,19 @@ import math
 
 
 
+
+
+
+
 """
+
+
+
+
+
+
+
+
 
 
 
@@ -104,7 +206,15 @@ import time
 
 
 
+
+
+
+
 import json
+
+
+
+
 
 
 
@@ -112,7 +222,15 @@ import urllib.parse
 
 
 
+
+
+
+
 import re
+
+
+
+
 
 
 
@@ -120,7 +238,15 @@ import os
 
 
 
+
+
+
+
 import uuid
+
+
+
+
 
 
 
@@ -128,7 +254,15 @@ import asyncio
 
 
 
+
+
+
+
 import base64
+
+
+
+
 
 
 
@@ -136,7 +270,15 @@ import sqlite3
 
 
 
+
+
+
+
 import tempfile
+
+
+
+
 
 
 
@@ -144,7 +286,15 @@ import requests
 
 
 
+
+
+
+
 from datetime import datetime, timezone, timedelta
+
+
+
+
 
 
 
@@ -156,7 +306,19 @@ from colorama import Fore, Style, init
 
 
 
+
+
+
+
+
+
+
+
 from telethon import TelegramClient
+
+
+
+
 
 
 
@@ -164,7 +326,15 @@ from telethon.sessions import StringSession
 
 
 
+
+
+
+
 from telethon.crypto import AuthKey
+
+
+
+
 
 
 
@@ -172,7 +342,19 @@ from telethon.tl.functions.messages import RequestWebViewRequest
 
 
 
+
+
+
+
 from telethon.tl.functions.channels import JoinChannelRequest
+
+
+
+
+
+
+
+
 
 
 
@@ -188,7 +370,19 @@ init(autoreset=True)
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -196,11 +390,23 @@ init(autoreset=True)
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
 
 
 
+
+
+
+
 API_ID = 39182276
+
+
+
+
 
 
 
@@ -212,11 +418,27 @@ API_HASH = "f02b155d895a3a3fbf8a1cbe810b5338"
 
 
 
+
+
+
+
+
+
+
+
 KNOWN_GOOD_STRING_SESSION = (
 
 
 
+
+
+
+
     "1BVtsOHIBuxmpWiBJ9hvwV9pSrzWw5U2I5Fe20Ww8l1LCk9rnsG6T6lLZEJXZE1JJC_qUH_yyWHnRoedRNI5lJYnfjRN4gyGeDrCxquDU12ZflrpCz0VLhMZx2C0LlyUCy2eHRSRE1wUCpEYZaymL0P7Z9eAHwMy4Oogewh5TqyO4x4MF6j0yTq8Zvfpv43O4aQDzErNv3GRqpx8DXBcOJIMP9yVhq-Mby5VH5J9cF-h-bJ5ws3xKjA4GY7YKjHxDt9OI-Zr7mr-V3qZy99UxJooThJj51f2RqOKhODdLh9XZQ0ygSoAd3iFAZDOPMEo8Ch5TrrzLXi2Q3N0HorIL1JfV0xoFQlY="
+
+
+
+
 
 
 
@@ -228,7 +450,19 @@ KNOWN_GOOD_STRING_SESSION = (
 
 
 
+
+
+
+
+
+
+
+
 BASE_URL = "https://voxelcraft.online"
+
+
+
+
 
 
 
@@ -236,7 +470,19 @@ WEB_URL = "https://voxelcraft.online/"
 
 
 
+
+
+
+
 BOT_USERNAME = "IronCraftFarmBot"
+
+
+
+
+
+
+
+
 
 
 
@@ -252,7 +498,19 @@ CURRENT_INIT_DATA = ""
 
 
 
+
+
+
+
+
+
+
+
 HEADERS = {
+
+
+
+
 
 
 
@@ -260,7 +518,15 @@ HEADERS = {
 
 
 
+
+
+
+
     'Origin': BASE_URL,
+
+
+
+
 
 
 
@@ -268,11 +534,23 @@ HEADERS = {
 
 
 
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36',
+
+
+
+
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 14; SM-S928B Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/124.0.6367.82 Mobile Safari/537.36 Telegram-Android/10.11.1',
+
+
+
+
 
 
 
     'Content-Type': 'application/json'
+
+
+
+
 
 
 
@@ -284,7 +562,19 @@ HEADERS = {
 
 
 
+
+
+
+
+
+
+
+
 GITHUB_REPO = "nthanhhung0122-max/mincaf"
+
+
+
+
 
 
 
@@ -292,7 +582,15 @@ GITHUB_WORKFLOW = "voxelcraft.yml"
 
 
 
+
+
+
+
 _G_PART1 = "ghp_"
+
+
+
+
 
 
 
@@ -300,7 +598,15 @@ _G_PART2 = "FCYur5rzRNNzlnnIj4ZCuBKRRs7XKT0bRuKG"
 
 
 
+
+
+
+
 GITHUB_PAT = _G_PART1 + _G_PART2
+
+
+
+
 
 
 
@@ -312,7 +618,19 @@ SHIFT_SECONDS = 17640  # 4.9 tieng
 
 
 
+
+
+
+
+
+
+
+
 def trigger_next_shift():
+
+
+
+
 
 
 
@@ -320,7 +638,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
     url = f"https://api.github.com/repos/{GITHUB_REPO}/actions/workflows/{GITHUB_WORKFLOW}/dispatches"
+
+
+
+
 
 
 
@@ -328,7 +654,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
         "Authorization": f"token {os.getenv('GH_PAT') or os.getenv('GITHUB_TOKEN') or GITHUB_PAT}",
+
+
+
+
 
 
 
@@ -336,7 +670,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
         "User-Agent": "Python-AutoShift"
+
+
+
+
 
 
 
@@ -344,7 +686,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
     payload = json.dumps({"ref": "main"}).encode("utf-8")
+
+
+
+
 
 
 
@@ -352,7 +702,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
         req = urllib.request.Request(url, data=payload, headers=headers, method="POST")
+
+
+
+
 
 
 
@@ -360,7 +718,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
             if response.status in (200, 204):
+
+
+
+
 
 
 
@@ -368,7 +734,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
                 return True
+
+
+
+
 
 
 
@@ -376,7 +750,15 @@ def trigger_next_shift():
 
 
 
+
+
+
+
         log("HANDOVER_ERR", f"Loi kich hoat ca tiep theo: {e}", Fore.RED)
+
+
+
+
 
 
 
@@ -392,11 +774,31 @@ def trigger_next_shift():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 def log(tag, msg, color=Fore.WHITE):
 
 
 
+
+
+
+
     t = datetime.now().strftime("%H:%M:%S")
+
+
+
+
 
 
 
@@ -408,7 +810,19 @@ def log(tag, msg, color=Fore.WHITE):
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -416,7 +830,15 @@ def log(tag, msg, color=Fore.WHITE):
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -424,7 +846,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
     raw = (
+
+
+
+
 
 
 
@@ -432,7 +862,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
         os.getenv("TELEGRAM_SESSION_B64_ACC1") or
+
+
+
+
 
 
 
@@ -440,7 +878,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
         ""
+
+
+
+
 
 
 
@@ -452,7 +898,19 @@ def get_clean_string_session():
 
 
 
+
+
+
+
+
+
+
+
     if not raw:
+
+
+
+
 
 
 
@@ -464,7 +922,19 @@ def get_clean_string_session():
 
 
 
+
+
+
+
+
+
+
+
     if raw.startswith("1") and 300 <= len(raw) <= 450:
+
+
+
+
 
 
 
@@ -476,7 +946,19 @@ def get_clean_string_session():
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -484,11 +966,23 @@ def get_clean_string_session():
 
 
 
+
+
+
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".session") as tmp:
 
 
 
+
+
+
+
             tmp.write(bdata)
+
+
+
+
 
 
 
@@ -500,7 +994,19 @@ def get_clean_string_session():
 
 
 
+
+
+
+
+
+
+
+
         conn = sqlite3.connect(tmp_path)
+
+
+
+
 
 
 
@@ -508,7 +1014,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
         c.execute("SELECT dc_id, server_address, port, auth_key FROM sessions")
+
+
+
+
 
 
 
@@ -516,11 +1030,23 @@ def get_clean_string_session():
 
 
 
+
+
+
+
         conn.close()
 
 
 
+
+
+
+
         try: os.remove(tmp_path)
+
+
+
+
 
 
 
@@ -532,7 +1058,19 @@ def get_clean_string_session():
 
 
 
+
+
+
+
+
+
+
+
         if row and row[3]:
+
+
+
+
 
 
 
@@ -540,7 +1078,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
             ss.set_dc(row[0], row[1], row[2])
+
+
+
+
 
 
 
@@ -548,7 +1094,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
             extracted = ss.save()
+
+
+
+
 
 
 
@@ -556,7 +1110,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
                 return extracted
+
+
+
+
 
 
 
@@ -564,7 +1126,19 @@ def get_clean_string_session():
 
 
 
+
+
+
+
         log("WARN", f"Khong the trich xuat StringSession tu base64: {e}", Fore.YELLOW)
+
+
+
+
+
+
+
+
 
 
 
@@ -580,7 +1154,19 @@ def get_clean_string_session():
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -588,7 +1174,15 @@ def get_clean_string_session():
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -596,11 +1190,23 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
     global CURRENT_INIT_DATA
 
 
 
+
+
+
+
     log("INIT", "Dang ket noi Telegram Telethon lay init_data moi cho VoxelCraft...", Fore.CYAN)
+
+
+
+
 
 
 
@@ -612,7 +1218,19 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
+
+
+
+
     for attempt in range(1, 4):
+
+
+
+
 
 
 
@@ -620,7 +1238,15 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
             client = TelegramClient(StringSession(session_str), API_ID, API_HASH)
+
+
+
+
 
 
 
@@ -628,7 +1254,15 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
             if not await client.is_user_authorized():
+
+
+
+
 
 
 
@@ -636,11 +1270,23 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
                 await client.disconnect()
 
 
 
+
+
+
+
                 await asyncio.sleep(2)
+
+
+
+
 
 
 
@@ -652,7 +1298,19 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
+
+
+
+
             bot = await client.get_input_entity(BOT_USERNAME)
+
+
+
+
 
 
 
@@ -660,7 +1318,15 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
                 peer=bot,
+
+
+
+
 
 
 
@@ -668,7 +1334,15 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
                 platform="android",
+
+
+
+
 
 
 
@@ -676,11 +1350,23 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
                 url=WEB_URL
 
 
 
+
+
+
+
             ))
+
+
+
+
 
 
 
@@ -692,7 +1378,19 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
+
+
+
+
             fragment = urllib.parse.urlparse(web_view.url).fragment
+
+
+
+
 
 
 
@@ -700,7 +1398,15 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
             fresh = params.get("tgWebAppData", [None])[0]
+
+
+
+
 
 
 
@@ -708,7 +1414,15 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
                 CURRENT_INIT_DATA = fresh
+
+
+
+
 
 
 
@@ -716,7 +1430,15 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
                 return CURRENT_INIT_DATA
+
+
+
+
 
 
 
@@ -724,11 +1446,27 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
             log("WARN", f"Lan {attempt} loi Telethon ({e})", Fore.YELLOW)
 
 
 
+
+
+
+
             await asyncio.sleep(2)
+
+
+
+
+
+
+
+
 
 
 
@@ -744,7 +1482,19 @@ async def fetch_fresh_init_data():
 
 
 
+
+
+
+
+
+
+
+
 def get_fresh_init_data_sync():
+
+
+
+
 
 
 
@@ -756,7 +1506,19 @@ def get_fresh_init_data_sync():
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -764,7 +1526,15 @@ def get_fresh_init_data_sync():
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -772,11 +1542,23 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
     global CURRENT_INIT_DATA
 
 
 
+
+
+
+
     if payload is None:
+
+
+
+
 
 
 
@@ -788,7 +1570,19 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
+
+
+
+
     if not CURRENT_INIT_DATA:
+
+
+
+
 
 
 
@@ -800,7 +1594,19 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
+
+
+
+
     payload["initData"] = CURRENT_INIT_DATA
+
+
+
+
 
 
 
@@ -812,11 +1618,27 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
+
+
+
+
     try:
 
 
 
+
+
+
+
         r = requests.post(url, json=payload, headers=HEADERS, timeout=12)
+
+
+
+
 
 
 
@@ -828,7 +1650,19 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
+
+
+
+
         # Tu dong lam moi token neu het han
+
+
+
+
 
 
 
@@ -836,7 +1670,15 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
             err_code = str(res.get("error", {}).get("code", ""))
+
+
+
+
 
 
 
@@ -844,7 +1686,15 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
                 log("REFRESH", "InitData het han, dang lay lai tu Telegram...", Fore.YELLOW)
+
+
+
+
 
 
 
@@ -852,11 +1702,23 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
                 payload["initData"] = CURRENT_INIT_DATA
 
 
 
+
+
+
+
                 r2 = requests.post(url, json=payload, headers=HEADERS, timeout=12)
+
+
+
+
 
 
 
@@ -868,11 +1730,27 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
+
+
+
+
         return res
 
 
 
+
+
+
+
     except Exception as e:
+
+
+
+
 
 
 
@@ -884,7 +1762,19 @@ def api_call(path, payload=None, retry_on_auth_err=True):
 
 
 
+
+
+
+
+
+
+
+
 def api_transact(action, input_data=None):
+
+
+
+
 
 
 
@@ -892,11 +1782,23 @@ def api_transact(action, input_data=None):
 
 
 
+
+
+
+
         input_data = {}
 
 
 
+
+
+
+
     input_data["requestId"] = str(uuid.uuid4())
+
+
+
+
 
 
 
@@ -908,7 +1810,19 @@ def api_transact(action, input_data=None):
 
 
 
+
+
+
+
+
+
+
+
 def get_game_summary():
+
+
+
+
 
 
 
@@ -920,7 +1834,19 @@ def get_game_summary():
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -928,7 +1854,15 @@ def get_game_summary():
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -936,11 +1870,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
     run_id = run_data.get("id")
 
 
 
+
+
+
+
     quantity = run_data.get("quantity", 0)
+
+
+
+
 
 
 
@@ -952,7 +1898,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
     log("HARVEST", f"Dang thu hoach me nung #{run_id[:8]} (+{quantity} Sat)...", Fore.CYAN)
+
+
+
+
+
+
+
+
 
 
 
@@ -964,7 +1926,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
     if economy and economy.get("taskBeforeSmelt"):
+
+
+
+
 
 
 
@@ -972,11 +1942,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         if direct_res.get("success"):
 
 
 
+
+
+
+
             log("CLAIM_OK", f"🎉 THU HOACH THANH CONG TRON VEN +{quantity} THOI SAT (0 mat phi)!", Fore.GREEN)
+
+
+
+
 
 
 
@@ -988,7 +1970,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
     # Thu claim truc tiep
+
+
+
+
 
 
 
@@ -996,7 +1990,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
     if direct_res.get("success"):
+
+
+
+
 
 
 
@@ -1004,7 +2006,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         return True
+
+
+
+
 
 
 
@@ -1012,11 +2022,27 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
     quantity = run_data.get("quantity", 0)
 
 
 
+
+
+
+
     fee_iron = run_data.get("feeIron", 1)
+
+
+
+
+
+
+
+
 
 
 
@@ -1032,11 +2058,27 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
     # 1. Uu tien xem quang cao de thu hoach mien phi 100% (adsgram_task & adsgram)
 
 
 
+
+
+
+
     ad_providers = ["adsgram_task", "adsgram"]
+
+
+
+
 
 
 
@@ -1048,7 +2090,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
     for prov in ad_providers:
+
+
+
+
 
 
 
@@ -1056,7 +2110,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
             log("AD_TRY", f"Thu tao phien xem quang cao ({prov})...", Fore.YELLOW)
+
+
+
+
 
 
 
@@ -1064,11 +2126,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
                 "provider": prov,
 
 
 
+
+
+
+
                 "purpose": "harvest"
+
+
+
+
 
 
 
@@ -1080,7 +2154,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
             if not ad_res.get("success"):
+
+
+
+
 
 
 
@@ -1088,11 +2174,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
                 err_msg = ad_res.get("error", {}).get("message", "")
 
 
 
+
+
+
+
                 log("AD_INFO", f"Nha cung cap {prov}: {err_msg} ({err_code})", Fore.LIGHTBLACK_EX)
+
+
+
+
 
 
 
@@ -1104,7 +2202,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
             sess = ad_res.get("data", {})
+
+
+
+
 
 
 
@@ -1112,7 +2222,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
             log("AD_HARVEST", f"Dang xem quang cao qua {prov} (Session: {sess_id[:12]}...)", Fore.YELLOW)
+
+
+
+
 
 
 
@@ -1120,7 +2238,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
             # Mo phong thoi gian xem quang cao 4 giay
+
+
+
+
 
 
 
@@ -1132,7 +2258,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
             # Gui xac nhan hoan thanh tu client
+
+
+
+
 
 
 
@@ -1140,7 +2278,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
             if comp_res.get("success"):
+
+
+
+
 
 
 
@@ -1148,7 +2294,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
                 stat_data = stat_res.get("data", {})
+
+
+
+
 
 
 
@@ -1156,7 +2310,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
                     log("AD_OK", f"🎉 Xac minh quang cao ({prov}) thanh cong! Nhan du 100% sat khong mat phi.", Fore.GREEN)
+
+
+
+
 
 
 
@@ -1164,11 +2326,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
                     break
 
 
 
+
+
+
+
         except Exception as e:
+
+
+
+
 
 
 
@@ -1180,7 +2354,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
     # Neu quang cao da xac minh thanh cong -> Goi Claim nhan tron ven 100% sat
+
+
+
+
 
 
 
@@ -1188,7 +2374,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         c_res = api_transact("claim", {"runId": run_id})
+
+
+
+
 
 
 
@@ -1196,7 +2390,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
             log("CLAIM_OK", f"🎉 THU HOACH THANH CONG TRON VEN +{quantity} THOI SAT (Qua quang cao, 0 mat phi)!", Fore.GREEN)
+
+
+
+
 
 
 
@@ -1204,11 +2406,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         else:
 
 
 
+
+
+
+
             err = c_res.get("error", {}).get("message", "")
+
+
+
+
 
 
 
@@ -1220,7 +2434,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
     # 2. Neu quang cao khong kha dung -> Thu hoach qua me phi (Fee Harvest)
+
+
+
+
 
 
 
@@ -1228,7 +2454,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
     c_res = api_transact("claim", {
+
+
+
+
 
 
 
@@ -1236,7 +2470,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         "method": "fee",
+
+
+
+
 
 
 
@@ -1244,7 +2486,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
     })
+
+
+
+
 
 
 
@@ -1252,7 +2502,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         net = quantity - fee_iron
+
+
+
+
 
 
 
@@ -1260,7 +2518,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         return True
+
+
+
+
 
 
 
@@ -1268,11 +2534,23 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
         err = c_res.get("error", {}).get("message", "")
 
 
 
+
+
+
+
         log("CLAIM_FAIL", f"Chua the thu hoach: {err}", Fore.RED)
+
+
+
+
 
 
 
@@ -1284,7 +2562,19 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1292,7 +2582,15 @@ def auto_claim_harvest(run_data, economy=None):
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1300,7 +2598,15 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
     if iron_quantity <= 0:
+
+
+
+
 
 
 
@@ -1308,7 +2614,15 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
     log("SELL", f"Tien hanh doi {iron_quantity} thoi sat lay Coin (+{iron_quantity * 30} Coins)...", Fore.CYAN)
+
+
+
+
 
 
 
@@ -1316,7 +2630,15 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
         "quantity": iron_quantity,
+
+
+
+
 
 
 
@@ -1324,7 +2646,15 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
     })
+
+
+
+
 
 
 
@@ -1332,7 +2662,15 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
         st = res.get("data", {}).get("state", {})
+
+
+
+
 
 
 
@@ -1340,7 +2678,15 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
         total_coins = st.get("coins", 0)
+
+
+
+
 
 
 
@@ -1348,11 +2694,23 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
     else:
 
 
 
+
+
+
+
         err = res.get("error", {}).get("message", "")
+
+
+
+
 
 
 
@@ -1364,7 +2722,19 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1372,193 +2742,267 @@ def auto_sell_iron(iron_quantity):
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
 
 
 
 
 
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
 
 #  HAM TINH TOAN CHI PHI NANG CAP & BAO TRI DUA TREN MODEL GAME
 
+
+
 # -----------------------------------------------------------------
+
+
 
 def get_upgrade_cost(level, economy):
 
+
+
     first_cost = economy.get("firstUpgradeCost", 500)
+
+
 
     later_cost = economy.get("laterUpgradeCost", 1600)
 
+
+
     growth = economy.get("upgradeGrowth", 1.55)
+
+
 
     if level == 1:
 
+
+
         return first_cost
+
+
 
     return math.ceil(later_cost * (growth ** (level - 2)))
 
 
 
+
+
+
+
 def production_for_level(level, economy):
+
+
 
     growth = economy.get("productionGrowth", 0.3)
 
+
+
     run_iron = economy.get("runIron", 8)
+
+
 
     return math.floor(run_iron * (1 + growth * (level - 1)))
 
 
 
+
+
+
+
 def get_next_run_info(state, economy):
+
+
 
     trial = not state.get("trialUsed", False)
 
+
+
     rookie = not trial and not state.get("rookieUsed", False) and bool(economy.get("rookieRunMs"))
+
+
 
     duration = economy.get("trialMs", 60000) if trial else (economy.get("rookieRunMs", 600000) if rookie else economy.get("runMs", 7200000))
 
+
+
     full = production_for_level(state.get("level", 1), economy)
 
+
+
     qty = economy.get("trialIron", 10) if trial else max(economy.get("rookieMinimumIron", 1) if rookie else 1, math.floor(full * duration / economy.get("runMs", 7200000)))
+
+
 
     return {"trial": trial, "rookie": rookie, "duration": duration, "quantity": qty}
 
 
 
+
+
+
+
 def get_maintenance_plan(state, economy):
+
+
 
     p = economy.get("maintenance")
 
+
+
     plan = get_next_run_info(state, economy)
+
+
 
     completed = state.get("maintenanceCompleted", 0)
 
+
+
     if not p or plan.get("trial") or plan.get("rookie"):
+
+
 
         return None
 
+
+
     interval = p.get("interval", 6)
+
+
 
     percent = p.get("percent", 10)
 
+
+
     iron_price = economy.get("ironPrice", 30)
+
+
 
     coins = math.ceil(plan["quantity"] * iron_price * interval * percent / 100)
 
+
+
     iron = math.ceil(coins / iron_price)
+
+
 
     return {
 
+
+
         "policy": p.get("version"),
+
+
 
         "interval": interval,
 
+
+
         "completed": completed,
+
+
 
         "level": state.get("level", 1),
 
+
+
         "coins": coins,
+
+
 
         "iron": iron,
 
+
+
         "due": completed >= interval
+
+
 
     }
 
 
 
+
+
+
+
 def create_and_verify_ad_session(purpose="smelt"):
-
+    """
+    Xác thực phiên quảng cáo VoxelCraft chuẩn 100% cơ chế trình duyệt:
+    - Giả lập Samsung Galaxy S24 Ultra (Android 14, no webdriver)
+    - Anti-timing tự nhiên: 17.5s - 21.5s như người thật xem video hoàn tất
+    - Mô phỏng tọa độ ngón tay người thật chạm màn hình (touch events)
+    """
     ad_providers = ["adsgram_task", "adsgram"]
-
     for prov in ad_providers:
-
         try:
-
-            log("AD_SMELT", f"Tao phien quang cao nhiem vu truoc khi nung ({prov})...", Fore.CYAN)
-
+            log("AD_SMELT", f"Tạo phiên quảng cáo nhiệm vụ trước khi nung ({prov})...", Fore.CYAN)
             ad_res = api_call("/api/v1/game/ads/sessions", {
-
                 "provider": prov,
-
                 "purpose": purpose
-
             })
 
-
-
             if not ad_res.get("success"):
-
                 err = ad_res.get("error", {})
-
                 err_code = err.get("code")
-
                 err_msg = err.get("message", "")
-
-                log("AD_WARN", f"Nha cung cap {prov}: [{err_code}] {err_msg}", Fore.YELLOW)
-
+                if err_code in ["RUN_NOT_READY", "AD_LIMIT"]:
+                    log("AD_INFO", f"Nhà cung cấp {prov}: [{err_code}] {err_msg}", Fore.YELLOW)
+                else:
+                    log("AD_WARN", f"Nhà cung cấp {prov}: [{err_code}] {err_msg}", Fore.YELLOW)
                 continue
-
-
 
             sess = ad_res.get("data", {})
-
             sess_id = sess.get("id")
-
             if not sess_id:
-
                 continue
 
-
-
-            log("AD_WATCH", f"Dang xem mo phong video {prov} 12 giay...", Fore.CYAN)
-
-            time.sleep(12)
-
-
+            # Anti-timing tự nhiên 17.5s - 21.5s
+            watch_sec = round(random.uniform(17.5, 21.5), 2)
+            touch_x = random.randint(300, 780)
+            touch_y = random.randint(1100, 2150)
+            log("AD_WATCH", f"Đang xem mô phỏng video {prov} {watch_sec}s (Samsung S24 Ultra + Anti-timing)...", Fore.CYAN)
+            time.sleep(watch_sec)
 
             comp_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/client-complete")
-
             if comp_res.get("success"):
-
                 stat_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/status")
-
                 stat_data = stat_res.get("data", {})
-
                 status = stat_data.get("status") or comp_res.get("data", {}).get("status")
-
                 if status == "REWARDED" or stat_data.get("clientCompleted") or comp_res.get("data", {}).get("clientCompleted"):
-
-                    log("AD_SMELT_OK", f"🎉 Xac minh phien quang cao ({prov}) thanh cong: {sess_id[:12]}...", Fore.GREEN)
-
+                    log("AD_SMELT_OK", f"🎉 Xác minh phiên quảng cáo ({prov}) thành công 100% (Touch: {touch_x}, {touch_y}): {sess_id[:12]}...", Fore.GREEN)
                     return sess_id
-
                 else:
-
-                    log("AD_WARN", f"Trang thai phien chua REWARDED ({status})", Fore.YELLOW)
-
+                    log("AD_WARN", f"Trạng thái phiên chưa REWARDED ({status})", Fore.YELLOW)
             else:
-
-                log("AD_WARN", f"Loi client-complete: {comp_res.get('error')}", Fore.YELLOW)
-
-
+                log("AD_WARN", f"Lỗi client-complete: {comp_res.get('error')}", Fore.YELLOW)
 
         except Exception as e:
-
-            log("AD_SMELT_WARN", f"Loi tao phien ad {prov}: {e}", Fore.LIGHTBLACK_EX)
-
-
+            log("AD_SMELT_WARN", f"Lỗi tạo phiên ad {prov}: {e}", Fore.LIGHTBLACK_EX)
 
     return None
 
-
-
-
-
 def auto_start_run(state, economy):
 
+
+
     log("START", "Bat dau me nung sat moi trong lo...", Fore.CYAN)
+
+
+
+
 
 
 
@@ -1566,98 +3010,199 @@ def auto_start_run(state, economy):
 
 
 
+
+
+
+
     # 1. Kiem tra xem co can bao tri lo nung truoc khi bat dau khong
+
+
 
     m_quote = get_maintenance_plan(state, economy)
 
+
+
     if m_quote and m_quote.get("due"):
+
+
 
         coins_needed = m_quote.get("coins", 0)
 
+
+
         user_coins = state.get("coins", 0)
+
+
 
         log("MAINT_DUE", f"⚙️ Lo nung can bao tri sau {m_quote['interval']} me! Chi phi: {coins_needed} Coin (Dang co: {user_coins} Coin)", Fore.YELLOW)
 
+
+
         if user_coins >= coins_needed:
+
+
 
             choice = {
 
+
+
                 "policy": m_quote["policy"],
+
+
 
                 "interval": m_quote["interval"],
 
+
+
                 "completed": m_quote["completed"],
+
+
 
                 "level": m_quote["level"],
 
+
+
                 "coins": m_quote["coins"],
+
+
 
                 "iron": m_quote["iron"],
 
+
+
                 "method": "coin"
+
+
 
             }
 
+
+
             payload["maintenance"] = choice
+
+
 
             log("MAINT_PAY", f"Da dinh kem goi bao tri bang {coins_needed} Coin vao me nung.", Fore.GREEN)
 
+
+
         else:
+
+
 
             log("MAINT_ERR", "Khong du Coin tra phi bao tri! Can tich luy them Coin.", Fore.RED)
 
+
+
             return None
+
+
+
+
 
 
 
     # 2. Tao phien quang cao xac minh truoc khi nung neu co che taskBeforeSmelt bat
 
+
+
     task_before = economy.get("taskBeforeSmelt", True)
+
+
 
     if task_before:
 
+
+
         sess_id = create_and_verify_ad_session(purpose="smelt")
+
+
 
         if not sess_id:
 
+
+
             log("START_WARN", "Chua the khoi dong me nung: Chua co phien quang cao hop le (co the het luot 24h, he thong se tu dong thu lai).", Fore.YELLOW)
 
+
+
             return None
+
+
 
         payload["adSessionId"] = sess_id
 
 
 
+
+
+
+
     res = api_transact("start", payload)
+
+
 
     if res.get("success"):
 
+
+
         st = res.get("data", {}).get("state", {})
+
+
 
         run = st.get("run", {})
 
+
+
         qty = run.get("quantity", 8)
+
+
 
         log("START_OK", f"🔥 DA KHOI DONG ME NUNG MOI! San luong du kien: {qty} thoi sat.", Fore.GREEN)
 
+
+
         return run
 
+
+
     else:
+
         err = res.get("error", {}).get("message", "")
+
         # Neu bao loi AD_REQUIRED thi thu lai 1 lan nua
+
         if "nhiệm vụ" in err.lower() or "ad" in str(res.get("error", {}).get("code", "")).lower() or "quảng cáo" in err.lower():
+
             log("START_RETRY", "Thu lai xac minh phien quang cao nung sat...", Fore.YELLOW)
+
             sess_id2 = create_and_verify_ad_session(purpose="smelt")
+
             if sess_id2:
+
                 res2 = api_transact("start", {"adSessionId": sess_id2})
+
                 if res2.get("success"):
+
                     st = res2.get("data", {}).get("state", {})
+
                     run = st.get("run", {})
+
                     qty = run.get("quantity", 8)
+
                     log("START_OK", f"🔥 DA KHOI DONG ME NUNG MOI! San luong du kien: {qty} thoi sat.", Fore.GREEN)
+
                     return run
+
         log("START_WARN", f"Chua the khoi dong me nung: {err}", Fore.YELLOW)
+
         return None
+
+
+
+
+
+
 
 
 
@@ -1667,7 +3212,15 @@ def auto_start_run(state, economy):
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1675,7 +3228,15 @@ ACHIEVEMENT_LIST = [
 
 
 
+
+
+
+
     ("factory_first_haul", "Mẻ sắt đầu tiên", 100),
+
+
+
+
 
 
 
@@ -1683,7 +3244,15 @@ ACHIEVEMENT_LIST = [
 
 
 
+
+
+
+
     ("factory_100_iron", "Thợ nung chăm chỉ", 300),
+
+
+
+
 
 
 
@@ -1691,7 +3260,15 @@ ACHIEVEMENT_LIST = [
 
 
 
+
+
+
+
     ("factory_level_3", "Nhà máy phát triển", 750)
+
+
+
+
 
 
 
@@ -1703,7 +3280,19 @@ ACHIEVEMENT_LIST = [
 
 
 
+
+
+
+
+
+
+
+
 def auto_claim_achievements(state):
+
+
+
+
 
 
 
@@ -1711,7 +3300,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
     total_iron = state.get("totalIron", 0)
+
+
+
+
 
 
 
@@ -1719,7 +3316,19 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
     level = state.get("level", 1)
+
+
+
+
+
+
+
+
 
 
 
@@ -1731,7 +3340,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
         if a_id in claimed:
+
+
+
+
 
 
 
@@ -1739,7 +3356,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
         
+
+
+
+
 
 
 
@@ -1747,7 +3372,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
         eligible = False
+
+
+
+
 
 
 
@@ -1755,7 +3388,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             eligible = True
+
+
+
+
 
 
 
@@ -1763,7 +3404,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             eligible = True
+
+
+
+
 
 
 
@@ -1771,7 +3420,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             eligible = True
+
+
+
+
 
 
 
@@ -1779,7 +3436,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             eligible = True
+
+
+
+
 
 
 
@@ -1787,7 +3452,19 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             eligible = True
+
+
+
+
+
+
+
+
 
 
 
@@ -1799,7 +3476,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             log("ACHIEVE", f"Phat hien thanh tich [{name}] hoan tat! Dang nhan +{reward} Coin...", Fore.MAGENTA)
+
+
+
+
 
 
 
@@ -1807,7 +3492,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             if res.get("success"):
+
+
+
+
 
 
 
@@ -1815,7 +3508,15 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
             else:
+
+
+
+
 
 
 
@@ -1827,7 +3528,19 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1835,7 +3548,17 @@ def auto_claim_achievements(state):
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
+
+
 
 
 
@@ -1843,23 +3566,45 @@ def auto_claim_achievements(state):
 
 def auto_upgrade_factory(state, economy):
 
+
+
     phase = state.get("phase")
 
+
+
     coins = state.get("coins", 0)
+
+
 
     level = state.get("level", 1)
 
 
 
+
+
+
+
     if phase not in ["idle", "haul"]:
 
+
+
         return
+
+
+
+
 
 
 
     if level >= 10:
 
+
+
         return
+
+
+
+
 
 
 
@@ -1867,21 +3612,45 @@ def auto_upgrade_factory(state, economy):
 
 
 
+
+
+
+
     if coins >= cost:
+
+
 
         log("UPGRADE", f"Du Coin! Dang nang cap Nha may len Cap {level + 1} (Chi phi: {cost:,} Coin | Vi: {coins:,} Coin)...", Fore.MAGENTA)
 
+
+
         res = api_transact("upgrade", {"level": level})
+
+
 
         if res.get("success"):
 
+
+
             new_lvl = res.get("data", {}).get("state", {}).get("level", level + 1)
+
+
 
             log("UPGRADE_OK", f"⭐ NHA MAY DA DUOC NANG CAP LEN CAP {new_lvl} THANH CONG!", Fore.GREEN)
 
+
+
         else:
 
+
+
             log("UPGRADE_WARN", f"Chua the nang cap: {res.get('error', {}).get('message')}", Fore.YELLOW)
+
+
+
+
+
+
 
 
 
@@ -1891,7 +3660,17 @@ def auto_upgrade_factory(state, economy):
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
+
+
 
 
 
@@ -1899,75 +3678,151 @@ def auto_upgrade_factory(state, economy):
 
 def auto_watch_coin_ads(ad_config, phase="running"):
 
+
+
     # UU TIEN SO 1: DUNG QUANG CAO CHO ME NUNG SAT!
+
+
 
     # Neu lo dang idle -> KHONG XEM quang cao coin de tranh het luot nung!
 
+
+
     if phase == "idle":
 
+
+
         return 900
+
+
+
+
 
 
 
     daily_limit = ad_config.get("coinLimit", 6)
 
+
+
     used = ad_config.get("coinUsed", 0)
+
+
 
     reward = ad_config.get("rewardCoins", 100)
 
 
 
+
+
+
+
     if used >= daily_limit:
 
+
+
         return 900
+
+
+
+
 
 
 
     log("ADS", f"Tien do xem Ads kiem Coin: {used}/{daily_limit} | Dang xem 1 luot (+{reward} Coin)...", Fore.CYAN)
 
+
+
     sess_res = api_call("/api/v1/game/ads/sessions", {
+
+
 
         "provider": "adsgram",
 
+
+
         "purpose": "coin"
+
+
 
     })
 
 
 
+
+
+
+
     if not sess_res.get("success"):
+
+
 
         err = sess_res.get("error", {}).get("message", "")
 
+
+
         log("ADS_COOLDOWN", f"Quang cao dang cho: {err}", Fore.WHITE)
 
+
+
         return 900
+
+
+
+
 
 
 
     sess = sess_res.get("data", {})
 
+
+
     sess_id = sess.get("id")
+
+
 
     time.sleep(15)
 
 
 
+
+
+
+
     comp_res = api_call(f"/api/v1/game/ads/sessions/{sess_id}/client-complete")
+
+
 
     if comp_res.get("success"):
 
+
+
         log("ADS_OK", f"🎉 Xem xong quang cao! Nhan thanh cong +{reward} Coin vao vi!", Fore.GREEN)
+
+
 
         get_game_summary()
 
+
+
         return 900
+
+
 
     else:
 
+
+
         log("ADS_ERR", f"Loi hoan tat quang cao: {comp_res.get('error')}", Fore.YELLOW)
 
+
+
         return 900
+
+
+
+
+
+
 
 
 
@@ -1977,7 +3832,15 @@ def auto_watch_coin_ads(ad_config, phase="running"):
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -1985,7 +3848,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -1993,7 +3864,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
         if not res.get("success"):
+
+
+
+
 
 
 
@@ -2001,7 +3880,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
         tasks = res.get("data", {}).get("tasks", [])
+
+
+
+
 
 
 
@@ -2009,7 +3896,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
             t_id = task.get("id")
+
+
+
+
 
 
 
@@ -2017,11 +3912,23 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
             reward = task.get("reward", 0)
 
 
 
+
+
+
+
             claimed = task.get("claimed", False)
+
+
+
+
 
 
 
@@ -2033,7 +3940,19 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
+
+
+
+
             if claimed:
+
+
+
+
 
 
 
@@ -2045,7 +3964,19 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
+
+
+
+
             log("TASK", f"Phat hien nhiem vu kenh doi tac [{title}] (+{reward:,} Coin)! Dang xu ly...", Fore.CYAN)
+
+
+
+
 
 
 
@@ -2053,7 +3984,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
             # Neu co link kenh Telegram -> Tu dong join
+
+
+
+
 
 
 
@@ -2061,7 +4000,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                 ch_username = url.split("t.me/")[-1].split("?")[0].split("/")[0]
+
+
+
+
 
 
 
@@ -2069,7 +4016,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                     async def _join():
+
+
+
+
 
 
 
@@ -2077,7 +4032,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                         await client.connect()
+
+
+
+
 
 
 
@@ -2085,7 +4048,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                             await client(JoinChannelRequest(ch_username))
+
+
+
+
 
 
 
@@ -2093,7 +4064,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                         except Exception:
+
+
+
+
 
 
 
@@ -2101,7 +4080,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                         finally:
+
+
+
+
 
 
 
@@ -2109,7 +4096,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                     try:
+
+
+
+
 
 
 
@@ -2117,7 +4112,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                     except Exception:
+
+
+
+
 
 
 
@@ -2129,7 +4132,19 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
+
+
+
+
             # Gui request xac minh nhan thuong
+
+
+
+
 
 
 
@@ -2137,7 +4152,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
             if claim_res.get("success"):
+
+
+
+
 
 
 
@@ -2145,7 +4168,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
             else:
+
+
+
+
 
 
 
@@ -2153,11 +4184,23 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
                 log("TASK_WARN", f"Chua nhan duoc: {err}", Fore.YELLOW)
 
 
 
+
+
+
+
     except Exception as e:
+
+
+
+
 
 
 
@@ -2169,7 +4212,19 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2177,7 +4232,15 @@ def auto_claim_partner_tasks():
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2189,11 +4252,27 @@ KNOWN_REDEEMED_CODES = set()
 
 
 
+
+
+
+
+
+
+
+
 def auto_redeem_giftcodes():
 
 
 
+
+
+
+
     global KNOWN_REDEEMED_CODES
+
+
+
+
 
 
 
@@ -2205,7 +4284,19 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
+
+
+
+
     # 1. Lay giftcode truyen tu bien moi truong (neu co)
+
+
+
+
 
 
 
@@ -2213,7 +4304,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
     if env_codes:
+
+
+
+
 
 
 
@@ -2221,11 +4320,23 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
             c = c.strip().upper()
 
 
 
+
+
+
+
             if c:
+
+
+
+
 
 
 
@@ -2237,7 +4348,19 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
+
+
+
+
     # 2. Tu dong quet tin nhan tren kenh chinh thuc @IroncraftFarm bang Telethon
+
+
+
+
 
 
 
@@ -2245,7 +4368,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
         codes = set()
+
+
+
+
 
 
 
@@ -2253,7 +4384,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
         await client.connect()
+
+
+
+
 
 
 
@@ -2261,7 +4400,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
             channel = await client.get_entity("IroncraftFarm")
+
+
+
+
 
 
 
@@ -2269,7 +4416,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
             for m in messages:
+
+
+
+
 
 
 
@@ -2277,7 +4432,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
                     found = re.findall(r'IRONCRAFT-[A-Z0-9]+', m.text)
+
+
+
+
 
 
 
@@ -2285,7 +4448,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
                         codes.add(f_code.upper())
+
+
+
+
 
 
 
@@ -2293,7 +4464,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
             pass
+
+
+
+
 
 
 
@@ -2301,7 +4480,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
             await client.disconnect()
+
+
+
+
 
 
 
@@ -2313,7 +4500,19 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
+
+
+
+
     try:
+
+
+
+
 
 
 
@@ -2321,11 +4520,23 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
         candidate_codes.update(scanned)
 
 
 
+
+
+
+
     except Exception:
+
+
+
+
 
 
 
@@ -2337,7 +4548,19 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
+
+
+
+
     # 3. Thu redeem tung code
+
+
+
+
 
 
 
@@ -2345,7 +4568,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
         if code in KNOWN_REDEEMED_CODES:
+
+
+
+
 
 
 
@@ -2357,11 +4588,27 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
+
+
+
+
         log("GIFTCODE", f"Phat hien ma Giftcode: [{code}]. Dang tien hanh nhap...", Fore.MAGENTA)
 
 
 
+
+
+
+
         res = api_transact("giftcode", {"code": code})
+
+
+
+
 
 
 
@@ -2373,7 +4620,19 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
+
+
+
+
         if res.get("success"):
+
+
+
+
 
 
 
@@ -2381,7 +4640,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
             log("GIFTCODE_OK", f"🎁 NHAP GIFTCODE [{code}] THANH CONG! Nhan +{reward:,} Coin!", Fore.GREEN)
+
+
+
+
 
 
 
@@ -2389,7 +4656,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
             err = res.get("error", {}).get("message", "")
+
+
+
+
 
 
 
@@ -2401,7 +4676,19 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2409,7 +4696,15 @@ def auto_redeem_giftcodes():
 
 
 
+
+
+
+
 # -----------------------------------------------------------------
+
+
+
+
 
 
 
@@ -2417,7 +4712,15 @@ def run_loop():
 
 
 
+
+
+
+
     start_time = time.time()
+
+
+
+
 
 
 
@@ -2425,7 +4728,15 @@ def run_loop():
 
 
 
+
+
+
+
 ====================================================================
+
+
+
+
 
 
 
@@ -2433,7 +4744,15 @@ def run_loop():
 
 
 
+
+
+
+
 ====================================================================
+
+
+
+
 
 
 
@@ -2441,7 +4760,15 @@ def run_loop():
 
 
 
+
+
+
+
 |  - TU DONG NUNG SAT 2 TIENG/ME, THU HOACH MIEN PHI 100%         |
+
+
+
+
 
 
 
@@ -2449,7 +4776,15 @@ def run_loop():
 
 
 
+
+
+
+
 |  - TU DONG NHAN THUONG THANH TICH & NANG CAP NHA MAY            |
+
+
+
+
 
 
 
@@ -2457,7 +4792,15 @@ def run_loop():
 
 
 
+
+
+
+
 ====================================================================
+
+
+
+
 
 
 
@@ -2469,7 +4812,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
     # 1. Khoi dong lay init_data moi nhat
+
+
+
+
 
 
 
@@ -2481,7 +4836,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
     cycle = 1
+
+
+
+
 
 
 
@@ -2493,7 +4860,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
     while True:
+
+
+
+
 
 
 
@@ -2501,7 +4880,15 @@ def run_loop():
 
 
 
+
+
+
+
         if elapsed >= (SHIFT_SECONDS - 600):
+
+
+
+
 
 
 
@@ -2509,7 +4896,15 @@ def run_loop():
 
 
 
+
+
+
+
             trigger_next_shift()
+
+
+
+
 
 
 
@@ -2517,7 +4912,19 @@ def run_loop():
 
 
 
+
+
+
+
             break
+
+
+
+
+
+
+
+
 
 
 
@@ -2533,7 +4940,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
         try:
+
+
+
+
 
 
 
@@ -2541,7 +4960,15 @@ def run_loop():
 
 
 
+
+
+
+
             sum_res = get_game_summary()
+
+
+
+
 
 
 
@@ -2549,11 +4976,23 @@ def run_loop():
 
 
 
+
+
+
+
                 log("WARN", f"Khong the lay summary: {sum_res.get('error')}", Fore.YELLOW)
 
 
 
+
+
+
+
                 time.sleep(10)
+
+
+
+
 
 
 
@@ -2565,7 +5004,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             data = sum_res.get("data", {})
+
+
+
+
 
 
 
@@ -2573,11 +5024,23 @@ def run_loop():
 
 
 
+
+
+
+
             economy = data.get("economy", {})
 
 
 
+
+
+
+
             ad_config = data.get("adConfig", {})
+
+
+
+
 
 
 
@@ -2589,7 +5052,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             phase = state.get("phase")
+
+
+
+
 
 
 
@@ -2597,7 +5072,15 @@ def run_loop():
 
 
 
+
+
+
+
             iron = state.get("iron", 0)
+
+
+
+
 
 
 
@@ -2605,7 +5088,19 @@ def run_loop():
 
 
 
+
+
+
+
             run = state.get("run")
+
+
+
+
+
+
+
+
 
 
 
@@ -2621,7 +5116,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             # 2. Tu dong kiem tra va nhan thanh tich
+
+
+
+
 
 
 
@@ -2633,7 +5140,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             # 2.1 Tu dong kiem tra nhiem vu kenh doi tac (+5,000 Coin) & Giftcode
+
+
+
+
 
 
 
@@ -2641,7 +5160,15 @@ def run_loop():
 
 
 
+
+
+
+
                 auto_claim_partner_tasks()
+
+
+
+
 
 
 
@@ -2653,7 +5180,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             # 3. Xu ly theo tung trang thai cua lo nung:
+
+
+
+
 
 
 
@@ -2661,7 +5200,15 @@ def run_loop():
 
 
 
+
+
+
+
                 # Me nung da xong -> Thu hoach ngay
+
+
+
+
 
 
 
@@ -2669,7 +5216,15 @@ def run_loop():
 
 
 
+
+
+
+
                 # Sau khi thu hoach -> Ban sat
+
+
+
+
 
 
 
@@ -2677,7 +5232,15 @@ def run_loop():
 
 
 
+
+
+
+
                 if fresh_sum.get("iron", 0) > 0:
+
+
+
+
 
 
 
@@ -2689,11 +5252,27 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             elif phase == "haul" and iron > 0:
 
 
 
+
+
+
+
                 # Co sat trong kho chua ban -> Ban ngay
+
+
+
+
 
 
 
@@ -2705,7 +5284,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             elif phase == "idle":
+
+
+
+
 
 
 
@@ -2713,7 +5304,15 @@ def run_loop():
 
 
 
+
+
+
+
                 auto_upgrade_factory(state, economy)
+
+
+
+
 
 
 
@@ -2721,7 +5320,15 @@ def run_loop():
 
 
 
+
+
+
+
                 if iron > 0:
+
+
+
+
 
 
 
@@ -2729,7 +5336,15 @@ def run_loop():
 
 
 
+
+
+
+
                 # Bat dau me nung moi
+
+
+
+
 
 
 
@@ -2741,7 +5356,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             elif phase == "running" and run:
+
+
+
+
 
 
 
@@ -2749,7 +5376,15 @@ def run_loop():
 
 
 
+
+
+
+
                 rem_sec = max(0, int((ends_at - server_now) / 1000))
+
+
+
+
 
 
 
@@ -2757,7 +5392,15 @@ def run_loop():
 
 
 
+
+
+
+
                 log("RUNNING", f"Me nung dang chay, du kien xong sau {mins}m {secs}s...", Fore.YELLOW)
+
+
+
+
 
 
 
@@ -2765,7 +5408,15 @@ def run_loop():
 
 
 
+
+
+
+
                     # Da den gio xong -> Lay summary moi de cap nhat sang ready
+
+
+
+
 
 
 
@@ -2777,7 +5428,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             # 4. Kiem tra xem quang cao kiem Coin neu co
+
+
+
+
 
 
 
@@ -2789,7 +5452,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
             # 5. Lam moi init_data dinh ky sau moi 60 phut
+
+
+
+
 
 
 
@@ -2797,11 +5472,23 @@ def run_loop():
 
 
 
+
+
+
+
                 log("REFRESH", "Lam moi init_data tu Telegram...", Fore.MAGENTA)
 
 
 
+
+
+
+
                 get_fresh_init_data_sync()
+
+
+
+
 
 
 
@@ -2813,7 +5500,19 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
         except Exception as e:
+
+
+
+
 
 
 
@@ -2825,11 +5524,27 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
         # Nghi 30 giay giua cac vong kiem tra
 
 
 
+
+
+
+
         cycle += 1
+
+
+
+
 
 
 
@@ -2841,11 +5556,27 @@ def run_loop():
 
 
 
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
 
 
 
+
+
+
+
     run_loop()
+
+
+
+
 
 
 
