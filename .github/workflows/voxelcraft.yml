@@ -1,16 +1,16 @@
-name: Auto VoxelCraft Farm - Acc 3 (phanhhyy)
+name: Auto Voxelcraft 24/7 (All Accounts)
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '11 */4 * * *'
+    - cron: '40 */5 * * *'
 
 concurrency:
-  group: voxelcraft-acc3
+  group: voxelcraft-all
   cancel-in-progress: true
 
 jobs:
-  run-voxelcraft-acc3:
+  run-voxelcraft:
     runs-on: ubuntu-latest
     timeout-minutes: 350
     permissions:
@@ -25,21 +25,21 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install requests telethon colorama urllib3
 
-      - name: Chay Bot VoxelCraft - Acc 3 (phanhhyy)
+      - name: Run all accounts (Acc 1 -> Acc 4) in single runner
         env:
           PYTHONUNBUFFERED: "1"
           PYTHONIOENCODING: "utf-8"
+          WORKFLOW_FILE: "voxelcraft.yml"
           GH_PAT: ${{ secrets.GH_PAT }}
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          MAX_RUNTIME_SECONDS: "19800"
         run: |
-          python auto_voxelcraft.py --acc 3
+          python run_all.py
 
       - name: Tu dong ban giao ca tiep theo (Handover Chaining 24/7)
         if: always()
@@ -48,4 +48,4 @@ jobs:
         run: |
           echo "Kich hoat ca chay tiep theo..."
           sleep 10
-          gh workflow run voxelcraft_acc3.yml --repo "${{ github.repository }}" || echo "Handover triggered."
+          gh workflow run voxelcraft.yml --repo "${{ github.repository }}" || echo "Handover triggered."
